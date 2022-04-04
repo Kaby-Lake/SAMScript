@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        SAMS
-// @description This is your new file, start writing code
+// @description 更改SAMS网页出校时间
 // @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/details/*
 // ==/UserScript==
 
@@ -23,7 +23,7 @@ function isWeekends(time) {
 
 /**
  *
- * @param {Document} DOM
+ * @param {Element} DOM
  * @param {Date} time
  * @param {Number} format
  */
@@ -64,7 +64,8 @@ try {
             if (parsed.storeTime + 5 * 60 * 1000 > Date.now()) {
                 startHour = parsed.value;
             }
-        } catch (e) {}
+        } catch (e) {
+        }
     }
     if (startHour == undefined) {
         startHour = Number.parseInt(window.prompt("开始时间(小时): "));
@@ -88,14 +89,16 @@ try {
         setTimeText(endTimeDOM, currentTime, 0);
 
         const weekends = isWeekends(currentTime);
-        if (isWeekends != false) {
+        if (weekends != false) {
             currentTime = weekends;
         }
+
+        debugger;
 
         //设置申请日期
         const applyHour = getRandomInt(5);
         currentTime.setHours(
-            applyHour + 11,
+            applyHour + 10,
             getRandomInt(60),
             getRandomInt(60)
         );
@@ -103,7 +106,7 @@ try {
 
         //设置审核日期
         currentTime.setHours(
-            applyHour + 12,
+            applyHour + 11,
             getRandomInt(60),
             getRandomInt(60)
         );
