@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name        SAMS
 // @description 更改SAMS网页出校时间
-// @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/details/*
+// @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave
+// @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/*
 // ==/UserScript==
 
 /**
@@ -11,12 +12,13 @@
  */
 function isWeekends(time) {
     const str = time.toString();
+    const copy = new Date(str);
     if (str.includes("Sat")) {
-        time.setDate(time.getDate() - 1);
-        return time;
+        copy.setDate(time.getDate() - 1);
+        return copy;
     } else if (str.includes("Sun")) {
-        time.setDate(time.getDate() - 2);
-        return time;
+        copy.setDate(time.getDate() - 2);
+        return copy;
     }
     return false;
 }
@@ -43,75 +45,112 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-try {
-    const columns = document.getElementsByClassName("form-horizontal")[0];
-    const startTimeDOM = columns.children[1].children[1];
-    const endTimeDOM = columns.children[2].children[1];
-    const applyTimeDOM = columns.children[6].children[1];
-    const approveTimeDOM =
-        columns.children[7].children[1].children[0].children[1].children[0]
-            .children[1];
+(function main() {
 
-    let startHour;
+    const isDetailPage = location.href.includes("/details/");
 
-    const cachedValue = localStorage.getItem("sams-crack-start");
-    debugger;
-
-    if (cachedValue) {
-        try {
-            const parsed = JSON.parse(cachedValue);
-            // 如果是五分钟以前，则要求重新输入
-            if (parsed.storeTime + 5 * 60 * 1000 > Date.now()) {
-                startHour = parsed.value;
-            }
-        } catch (e) {
-        }
-    }
-    if (startHour == undefined) {
-        startHour = Number.parseInt(window.prompt("开始时间(小时): "));
-    }
-
-    if (!window.isNaN(startHour)) {
-        const cachedValue = {
-            value: startHour,
-            storeTime: Date.now(),
-        };
-        localStorage.setItem("sams-crack-start", JSON.stringify(cachedValue));
+    try {
+        const cachedValue = localStorage.getItem("sams-crack-start");
 
         let currentTime = new Date();
+        let startTime = new Date();
+        let endTime = new Date();
+        let applyTime = new Date();
+        let approveTime = new Date();
 
-        //设置开始时间
-        currentTime.setHours(startHour, 0, 0);
-        setTimeText(startTimeDOM, currentTime, 0);
+        let startHour;
 
-        //设置结束时间
-        currentTime.setHours(startHour + 1);
-        setTimeText(endTimeDOM, currentTime, 0);
+        let isExpired = true;
 
-        const weekends = isWeekends(currentTime);
-        if (weekends != false) {
-            currentTime = weekends;
+        debugger
+
+        if (cachedValue) {
+            try {
+                const parsed = JSON.parse(cachedValue);
+                // 如果是10分钟以前，则要求重新输入
+                if (new Date(parsed.storeTime).getTime() + 10 * 60 * 1000 > Date.now()) {
+                    currentTime = new Date(parsed.storeTime);
+                    startTime = new Date(parsed.startTime);
+                    endTime = new Date(parsed.endTime);
+                    applyTime = new Date(parsed.applyTime);
+                    approveTime = new Date(parsed.approveTime);
+                    isExpired = false;
+                }
+            } catch (e) {
+            }
         }
 
-        debugger;
+        if (isExpired) {
+            // 如果之前没输入过时间，或者输入过但是超过10分钟，则重新输入
+            startHour = Number.parseInt(window.prompt("开始时间(小时): "));
 
-        //设置申请日期
-        const applyHour = getRandomInt(5);
-        currentTime.setHours(
-            applyHour + 10,
-            getRandomInt(60),
-            getRandomInt(60)
-        );
-        setTimeText(applyTimeDOM, currentTime, 0);
+            if (isNaN(startHour)) {
+                alert("请输入正确的开始时间");
+                return;
+            }
 
-        //设置审核日期
-        currentTime.setHours(
-            applyHour + 11,
-            getRandomInt(60),
-            getRandomInt(60)
-        );
-        setTimeText(approveTimeDOM, currentTime, 1);
+            //设置开始时间
+            startTime.setHours(startHour, 0, 0);
+
+            //设置结束时间
+            endTime.setHours(startHour + 2, 0, 0);
+
+            const weekends = isWeekends(currentTime);
+            if (weekends != false) {
+                applyTime = weekends;
+                approveTime = weekends;
+            }
+
+            //设置申请日期
+            const applyHour = getRandomInt(5);
+            applyTime.setHours(
+                applyHour + 10,
+                getRandomInt(60),
+                getRandomInt(60)
+            );
+
+            //设置审批日期
+            approveTime.setHours(
+                applyHour + 11,
+                getRandomInt(60),
+                getRandomInt(60)
+            );
+        }
+
+        localStorage.setItem("sams-crack-start", JSON.stringify({
+            startTime,
+            endTime,
+            applyTime,
+            approveTime,
+            storeTime: currentTime,
+        }));
+
+        const startTimeDOM = isDetailPage ?
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div") :
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(2)");
+
+        const endTimeDOM = isDetailPage ?
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div") :
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)")
+
+        const applyTimeDOM = isDetailPage ?
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div") :
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)")
+
+        const approveTimeDOM = isDetailPage ?
+            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)") :
+            undefined;
+
+        setTimeText(startTimeDOM, startTime, 0);
+
+        setTimeText(endTimeDOM, endTime, 0);
+
+        setTimeText(applyTimeDOM, applyTime, 0);
+
+        if (approveTimeDOM) {
+            setTimeText(approveTimeDOM, approveTime, 1);
+        }
+    } catch (error) {
+        console.log(error);
     }
-} catch (error) {
-    console.log(error);
-}
+}());
