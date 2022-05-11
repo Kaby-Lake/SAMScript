@@ -46,11 +46,10 @@ function getRandomInt(max) {
 }
 
 (function main() {
-
     const isDetailPage = location.href.includes("/details/");
 
     try {
-        const cachedValue = localStorage.getItem("sams-crack-start");
+        const cachedValue = localStorage.getItem("sams-crack");
 
         let currentTime = new Date();
         let startTime = new Date();
@@ -62,13 +61,14 @@ function getRandomInt(max) {
 
         let isExpired = true;
 
-        debugger
-
         if (cachedValue) {
             try {
                 const parsed = JSON.parse(cachedValue);
                 // 如果是10分钟以前，则要求重新输入
-                if (new Date(parsed.storeTime).getTime() + 10 * 60 * 1000 > Date.now()) {
+                if (
+                    new Date(parsed.storeTime).getTime() + 10 * 60 * 1000 >
+                    Date.now()
+                ) {
                     currentTime = new Date(parsed.storeTime);
                     startTime = new Date(parsed.startTime);
                     endTime = new Date(parsed.endTime);
@@ -76,8 +76,7 @@ function getRandomInt(max) {
                     approveTime = new Date(parsed.approveTime);
                     isExpired = false;
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
         }
 
         if (isExpired) {
@@ -98,7 +97,7 @@ function getRandomInt(max) {
             const weekends = isWeekends(currentTime);
             if (weekends != false) {
                 applyTime = weekends;
-                approveTime = weekends;
+                approveTime = new Date(weekends);
             }
 
             //设置申请日期
@@ -117,29 +116,46 @@ function getRandomInt(max) {
             );
         }
 
-        localStorage.setItem("sams-crack-start", JSON.stringify({
-            startTime,
-            endTime,
-            applyTime,
-            approveTime,
-            storeTime: currentTime,
-        }));
+        localStorage.setItem(
+            "sams-crack",
+            JSON.stringify({
+                startTime,
+                endTime,
+                applyTime,
+                approveTime,
+                storeTime: currentTime,
+            })
+        );
 
-        const startTimeDOM = isDetailPage ?
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div") :
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(2)");
+        const startTimeDOM = isDetailPage
+            ? document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div"
+              )
+            : document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(2)"
+              );
 
-        const endTimeDOM = isDetailPage ?
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div") :
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)")
+        const endTimeDOM = isDetailPage
+            ? document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div"
+              )
+            : document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)"
+              );
 
-        const applyTimeDOM = isDetailPage ?
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div") :
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)")
+        const applyTimeDOM = isDetailPage
+            ? document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div"
+              )
+            : document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)"
+              );
 
-        const approveTimeDOM = isDetailPage ?
-            document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)") :
-            undefined;
+        const approveTimeDOM = isDetailPage
+            ? document.querySelector(
+                  "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)"
+              )
+            : undefined;
 
         setTimeText(startTimeDOM, startTime, 0);
 
@@ -150,7 +166,14 @@ function getRandomInt(max) {
         if (approveTimeDOM) {
             setTimeText(approveTimeDOM, approveTime, 1);
         }
+
+        const avatarDOM = document.querySelector(
+            "body > div.wrapper > header > nav > div.navbar-custom-menu > ul > li > ul > li.user-header > img"
+        );
+        avatarDOM.addEventListener("click", () => {
+            localStorage.removeItem("sams-crack");
+        });
     } catch (error) {
         console.log(error);
     }
-}());
+})();
