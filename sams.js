@@ -57,34 +57,32 @@ function getRandomInt(max) {
         let applyTime = new Date();
         let approveTime = new Date();
 
-        let startHour;
-
         let isExpired = true;
 
         if (cachedValue) {
             try {
                 const parsed = JSON.parse(cachedValue);
-                // 如果是10分钟以前，则要求重新输入
-                if (
-                    new Date(parsed.storeTime).getTime() + 10 * 60 * 1000 >
-                    Date.now()
-                ) {
-                    currentTime = new Date(parsed.storeTime);
-                    startTime = new Date(parsed.startTime);
-                    endTime = new Date(parsed.endTime);
-                    applyTime = new Date(parsed.applyTime);
-                    approveTime = new Date(parsed.approveTime);
-                    isExpired = false;
-                }
+                startTime = new Date(parsed.startTime);
+                endTime = new Date(parsed.endTime);
+                applyTime = new Date(parsed.applyTime);
+                approveTime = new Date(parsed.approveTime);
+                isExpired = false;
             } catch (e) {}
         }
 
         if (isExpired) {
-            // 如果之前没输入过时间，或者输入过但是超过10分钟，则重新输入
-            startHour = Number.parseInt(window.prompt("开始时间(小时): "));
+            // 如果之前没输入过时间，则重新输入
+            let startHour = Number.parseInt(window.prompt("开始时间(小时):"));
 
             if (isNaN(startHour)) {
                 alert("请输入正确的开始时间");
+                return;
+            }
+
+            let endHour = Number.parseInt(window.prompt("结束时间(小时):"));
+
+            if (isNaN(endHour)) {
+                alert("请输入正确的结束时间");
                 return;
             }
 
@@ -92,7 +90,7 @@ function getRandomInt(max) {
             startTime.setHours(startHour, 0, 0);
 
             //设置结束时间
-            endTime.setHours(startHour + 2, 0, 0);
+            endTime.setHours(endHour, 0, 0);
 
             const weekends = isWeekends(currentTime);
             if (weekends != false) {
@@ -123,7 +121,6 @@ function getRandomInt(max) {
                 endTime,
                 applyTime,
                 approveTime,
-                storeTime: currentTime,
             })
         );
 
