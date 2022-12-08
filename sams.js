@@ -1,6 +1,8 @@
 // ==UserScript==
 // @name        SAMS
 // @description 更改SAMS网页出校时间
+// @match       https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave
+// @match       https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave/*
 // @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave
 // @match       https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/*
 // ==/UserScript==
