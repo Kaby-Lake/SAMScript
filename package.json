@@ -1,0 +1,58 @@
+{
+  "name": "samscript",
+  "version": "1.1.0",
+  "description": "更改 SAMS 网页出校时间",
+  "main": "userscript/SAMScript.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "build:watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pboymt/userscript-typescript-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pboymt/userscript-typescript-template/issues"
+  },
+  "homepage": "https://github.com/pboymt/userscript-typescript-template#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.10",
+    "@types/prettier": "^2.7.0",
+    "@types/tampermonkey": "^4.0.5",
+    "@types/webpack": "^5.28.0",
+    "axios-userscript-adapter": "^0.1.12",
+    "prettier": "^2.7.1",
+    "terser-webpack-plugin": "^5.3.6",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2",
+    "webpack": "^5.64.3",
+    "webpack-cli": "^4.9.1"
+  },
+  "userscript": {
+    "name": "SAMScript",
+    "description": "更改 SAMS 网页出校时间",
+    "version": "1.1.0",
+    "author": "Kaby Lake",
+    "homepage": "https://github.com/Kaby-Lake/SAMScript",
+    "license": "https://opensource.org/licenses/MIT",
+    "match": [
+      "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave",
+      "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave/*",
+      "https://sams.nottingham.edu.cn/zh/Students/stuaskforleave",
+      "https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/*"
+    ],
+    "connect": [],
+    "require": [],
+    "grant": [],
+    "exclude": [],
+    "resources": []
+  },
+  "dependencies": {
+    "dayjs": "^1.11.7"
+  }
+}

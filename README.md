@@ -13,7 +13,7 @@
 #### iOS
 
 - 在Files中创建一个 Scripts 文件夹
-- 将 `sams.js` 文件放入该文件夹
+- 将 `/userscript/SAMScript.js` 文件放入该文件夹
 - 下载 UserScripts 并在 Safari 开启扩展权限（允许作用与所有页面）
 - 登录SAMS的请假列表页面，插件应该就可以用了
 
