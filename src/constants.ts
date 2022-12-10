@@ -8,6 +8,10 @@ export const DETAIL_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.conte
 
 export const LIST_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)";
 
+export const DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div";
+
+export const LIST_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)";
+
 export const DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)";
 
 export const AVATAR_DOM_SELECTOR = "body > div.wrapper > header > nav > div.navbar-custom-menu > ul > li > ul > li.user-header > img";

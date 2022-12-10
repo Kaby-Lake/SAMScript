@@ -1,8 +1,8 @@
 import {
-    AVATAR_DOM_SELECTOR,
+    AVATAR_DOM_SELECTOR, DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR,
     DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR,
     DETAIL_PAGE_END_TIME_DOM_SELECTOR,
-    DETAIL_PAGE_START_TIME_DOM_SELECTOR,
+    DETAIL_PAGE_START_TIME_DOM_SELECTOR, LIST_PAGE_APPLY_TIME_DOM_SELECTOR,
     LIST_PAGE_END_TIME_DOM_SELECTOR,
     LIST_PAGE_START_TIME_DOM_SELECTOR,
     SAMS_LOCAL_STORAGE_KEY
@@ -13,12 +13,14 @@ import {MemorizedType} from "./types";
 import {getLocalStorage, hasLocalStorage, setLocalStorage} from "./utils/localStorage";
 import {getRandomInt} from "./utils/math";
 import {getEndOfWeekdays, isWeekends} from "./utils/date";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
+import weekday from 'dayjs/plugin/weekday'
+dayjs.extend(weekday)
 
 function setTimeText(DOM: Element | null, date: Dayjs, format: number) {
     let timeText = date.format('YYYY-MM-DD HH:mm');
     if (format == 1) {
-        timeText = date.toLocaleString();
+        timeText = date.toDate().toLocaleString();
     }
     if (DOM) {
         DOM.innerHTML = timeText;
@@ -48,10 +50,10 @@ function setTimeText(DOM: Element | null, date: Dayjs, format: number) {
             let endHour = getIntegerFromPrompt("结束时间(小时):", "请输入正确的结束时间");
 
             //设置开始时间
-            record.startTime.set("hours", startHour);
+            record.startTime = record.startTime.set("hour", startHour);
 
             //设置结束时间
-            record.endTime.set('hours', endHour);
+            record.endTime = record.endTime.set('hour', endHour);
 
             if (isWeekends()) {
                 record.applyTime = getEndOfWeekdays()
@@ -60,36 +62,31 @@ function setTimeText(DOM: Element | null, date: Dayjs, format: number) {
 
             //设置申请日期
             const applyHour = getRandomInt(5);
-            record.applyTime
-                .set("hours", applyHour + 10)
-                .set("minutes", getRandomInt(60))
-                .set("minutes", getRandomInt(60))
+            record.applyTime = record.applyTime
+                .set("hour", applyHour + 10)
+                .set("minute", getRandomInt(60))
+                .set("minute", getRandomInt(60))
 
             //设置审批日期
-            record.approveTime
-                .set("hours", applyHour + 11)
-                .set("minutes", getRandomInt(60))
-                .set("minutes", getRandomInt(60))
+            record.approveTime = record.approveTime
+                .set("hour", applyHour + 11)
+                .set("minute", getRandomInt(60))
+                .set("minute", getRandomInt(60))
 
             setLocalStorage(SAMS_LOCAL_STORAGE_KEY, record.toMemorizedString())
         }
-
 
         const startTimeDOM = isDetailPage
             ? document.querySelector(DETAIL_PAGE_START_TIME_DOM_SELECTOR)
             : document.querySelector(LIST_PAGE_START_TIME_DOM_SELECTOR);
 
         const endTimeDOM = isDetailPage
-            ? document.querySelector(
-                "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div"
-            )
-            : document.querySelector(
-                "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)"
-            );
-
-        const applyTimeDOM = isDetailPage
             ? document.querySelector(DETAIL_PAGE_END_TIME_DOM_SELECTOR)
             : document.querySelector(LIST_PAGE_END_TIME_DOM_SELECTOR);
+
+        const applyTimeDOM = isDetailPage
+            ? document.querySelector(DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR)
+            : document.querySelector(LIST_PAGE_APPLY_TIME_DOM_SELECTOR);
 
         const approveTimeDOM = isDetailPage
             ? document.querySelector(DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR)

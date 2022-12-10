@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name SAMScript
-// @version 1.1.0
+// @version 1.1.1
 // @description 更改 SAMS 网页出校时间
 // @author Kaby Lake
 // @homepage https://github.com/Kaby-Lake/SAMScript
@@ -13,19 +13,112 @@
 
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ([
-/* 0 */,
+/* 0 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const constants_1 = __webpack_require__(1);
+const prompt_1 = __webpack_require__(2);
+const record_1 = __webpack_require__(3);
+const localStorage_1 = __webpack_require__(6);
+const math_1 = __webpack_require__(7);
+const date_1 = __webpack_require__(5);
+const dayjs_1 = __importDefault(__webpack_require__(4));
+const weekday_1 = __importDefault(__webpack_require__(8));
+dayjs_1.default.extend(weekday_1.default);
+function setTimeText(DOM, date, format) {
+    let timeText = date.format('YYYY-MM-DD HH:mm');
+    if (format == 1) {
+        timeText = date.toDate().toLocaleString();
+    }
+    if (DOM) {
+        DOM.innerHTML = timeText;
+    }
+}
+(function main() {
+    var _a;
+    try {
+        const isDetailPage = location.href.includes("/details/");
+        const record = new record_1.Record();
+        if ((0, localStorage_1.hasLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY)) {
+            try {
+                const parsed = JSON.parse((_a = (0, localStorage_1.getLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY)) !== null && _a !== void 0 ? _a : "");
+                record.restoreRecord(parsed);
+            }
+            catch (e) {
+                localStorage.removeItem(constants_1.SAMS_LOCAL_STORAGE_KEY);
+                alert("LocalStorage 格式错误，请刷新页面后重试");
+            }
+        }
+        else {
+            let startHour = (0, prompt_1.getIntegerFromPrompt)("开始时间(小时):", "请输入正确的开始时间");
+            let endHour = (0, prompt_1.getIntegerFromPrompt)("结束时间(小时):", "请输入正确的结束时间");
+            record.startTime = record.startTime.set("hour", startHour);
+            record.endTime = record.endTime.set('hour', endHour);
+            if ((0, date_1.isWeekends)()) {
+                record.applyTime = (0, date_1.getEndOfWeekdays)();
+                record.approveTime = (0, date_1.getEndOfWeekdays)();
+            }
+            const applyHour = (0, math_1.getRandomInt)(5);
+            record.applyTime = record.applyTime
+                .set("hour", applyHour + 10)
+                .set("minute", (0, math_1.getRandomInt)(60))
+                .set("minute", (0, math_1.getRandomInt)(60));
+            record.approveTime = record.approveTime
+                .set("hour", applyHour + 11)
+                .set("minute", (0, math_1.getRandomInt)(60))
+                .set("minute", (0, math_1.getRandomInt)(60));
+            (0, localStorage_1.setLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY, record.toMemorizedString());
+        }
+        const startTimeDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_START_TIME_DOM_SELECTOR)
+            : document.querySelector(constants_1.LIST_PAGE_START_TIME_DOM_SELECTOR);
+        const endTimeDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_END_TIME_DOM_SELECTOR)
+            : document.querySelector(constants_1.LIST_PAGE_END_TIME_DOM_SELECTOR);
+        const applyTimeDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR)
+            : document.querySelector(constants_1.LIST_PAGE_APPLY_TIME_DOM_SELECTOR);
+        const approveTimeDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR)
+            : undefined;
+        setTimeText(startTimeDOM, record.startTime, 0);
+        setTimeText(endTimeDOM, record.endTime, 0);
+        setTimeText(applyTimeDOM, record.applyTime, 0);
+        if (approveTimeDOM) {
+            setTimeText(approveTimeDOM, record.approveTime, 1);
+        }
+        const avatarDOM = document.querySelector(constants_1.AVATAR_DOM_SELECTOR);
+        avatarDOM === null || avatarDOM === void 0 ? void 0 : avatarDOM.addEventListener("click", () => {
+            localStorage.removeItem(constants_1.SAMS_LOCAL_STORAGE_KEY);
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+})();
+
+
+/***/ }),
 /* 1 */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AVATAR_DOM_SELECTOR = exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = exports.LIST_PAGE_END_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = exports.LIST_PAGE_START_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = exports.SAMS_LOCAL_STORAGE_KEY = void 0;
+exports.AVATAR_DOM_SELECTOR = exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = exports.LIST_PAGE_APPLY_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = exports.LIST_PAGE_END_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = exports.LIST_PAGE_START_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = exports.SAMS_LOCAL_STORAGE_KEY = void 0;
 exports.SAMS_LOCAL_STORAGE_KEY = 'sams_crack';
 exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div";
 exports.LIST_PAGE_START_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(2)";
 exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div";
 exports.LIST_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)";
+exports.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div";
+exports.LIST_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)";
 exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)";
 exports.AVATAR_DOM_SELECTOR = "body > div.wrapper > header > nav > div.navbar-custom-menu > ul > li > ul > li.user-header > img";
 
@@ -107,14 +200,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getEndOfWeekdays = exports.isWeekends = exports.getStartOfDay = void 0;
 const dayjs_1 = __importDefault(__webpack_require__(4));
-const weekday_1 = __importDefault(__webpack_require__(6));
-dayjs_1.default.extend(weekday_1.default);
 function getStartOfDay(date) {
     return date.set("hour", 0).set("minute", 0).set("second", 0);
 }
 exports.getStartOfDay = getStartOfDay;
 function isWeekends() {
-    return (0, dayjs_1.default)().weekday() === 6 || (0, dayjs_1.default)().weekday() === 0;
+    alert((0, dayjs_1.default)().weekday());
+    return (0, dayjs_1.default)().weekday() === 6 || (0, dayjs_1.default)().weekday() === 7;
 }
 exports.isWeekends = isWeekends;
 function getEndOfWeekdays() {
@@ -125,12 +217,6 @@ exports.getEndOfWeekdays = getEndOfWeekdays;
 
 /***/ }),
 /* 6 */
-/***/ (function(module) {
-
-!function(e,t){ true?module.exports=t():0}(this,(function(){"use strict";return function(e,t){t.prototype.weekday=function(e){var t=this.$locale().weekStart||0,i=this.$W,n=(i<t?i+7:i)-t;return this.$utils().u(e)?n:this.subtract(n,"day").add(e,"day")}}}));
-
-/***/ }),
-/* 7 */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -157,7 +243,7 @@ exports.setLocalStorage = setLocalStorage;
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -169,6 +255,12 @@ function getRandomInt(max) {
 }
 exports.getRandomInt = getRandomInt;
 
+
+/***/ }),
+/* 8 */
+/***/ (function(module) {
+
+!function(e,t){ true?module.exports=t():0}(this,(function(){"use strict";return function(e,t){t.prototype.weekday=function(e){var t=this.$locale().weekStart||0,i=this.$W,n=(i<t?i+7:i)-t;return this.$utils().u(e)?n:this.subtract(n,"day").add(e,"day")}}}));
 
 /***/ })
 /******/ 	]);
@@ -198,92 +290,11 @@ exports.getRandomInt = getRandomInt;
 /******/ 	}
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-var exports = __webpack_exports__;
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const constants_1 = __webpack_require__(1);
-const prompt_1 = __webpack_require__(2);
-const record_1 = __webpack_require__(3);
-const localStorage_1 = __webpack_require__(7);
-const math_1 = __webpack_require__(8);
-const date_1 = __webpack_require__(5);
-function setTimeText(DOM, date, format) {
-    let timeText = date.format('YYYY-MM-DD HH:mm');
-    if (format == 1) {
-        timeText = date.toLocaleString();
-    }
-    if (DOM) {
-        DOM.innerHTML = timeText;
-    }
-}
-(function main() {
-    var _a;
-    try {
-        const isDetailPage = location.href.includes("/details/");
-        const record = new record_1.Record();
-        if ((0, localStorage_1.hasLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY)) {
-            try {
-                const parsed = JSON.parse((_a = (0, localStorage_1.getLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY)) !== null && _a !== void 0 ? _a : "");
-                record.restoreRecord(parsed);
-            }
-            catch (e) {
-                localStorage.removeItem(constants_1.SAMS_LOCAL_STORAGE_KEY);
-                alert("LocalStorage 格式错误，请刷新页面后重试");
-            }
-        }
-        else {
-            let startHour = (0, prompt_1.getIntegerFromPrompt)("开始时间(小时):", "请输入正确的开始时间");
-            let endHour = (0, prompt_1.getIntegerFromPrompt)("结束时间(小时):", "请输入正确的结束时间");
-            record.startTime.set("hours", startHour);
-            record.endTime.set('hours', endHour);
-            if ((0, date_1.isWeekends)()) {
-                record.applyTime = (0, date_1.getEndOfWeekdays)();
-                record.approveTime = (0, date_1.getEndOfWeekdays)();
-            }
-            const applyHour = (0, math_1.getRandomInt)(5);
-            record.applyTime
-                .set("hours", applyHour + 10)
-                .set("minutes", (0, math_1.getRandomInt)(60))
-                .set("minutes", (0, math_1.getRandomInt)(60));
-            record.approveTime
-                .set("hours", applyHour + 11)
-                .set("minutes", (0, math_1.getRandomInt)(60))
-                .set("minutes", (0, math_1.getRandomInt)(60));
-            (0, localStorage_1.setLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY, record.toMemorizedString());
-        }
-        const startTimeDOM = isDetailPage
-            ? document.querySelector(constants_1.DETAIL_PAGE_START_TIME_DOM_SELECTOR)
-            : document.querySelector(constants_1.LIST_PAGE_START_TIME_DOM_SELECTOR);
-        const endTimeDOM = isDetailPage
-            ? document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div")
-            : document.querySelector("body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)");
-        const applyTimeDOM = isDetailPage
-            ? document.querySelector(constants_1.DETAIL_PAGE_END_TIME_DOM_SELECTOR)
-            : document.querySelector(constants_1.LIST_PAGE_END_TIME_DOM_SELECTOR);
-        const approveTimeDOM = isDetailPage
-            ? document.querySelector(constants_1.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR)
-            : undefined;
-        setTimeText(startTimeDOM, record.startTime, 0);
-        setTimeText(endTimeDOM, record.endTime, 0);
-        setTimeText(applyTimeDOM, record.applyTime, 0);
-        if (approveTimeDOM) {
-            setTimeText(approveTimeDOM, record.approveTime, 1);
-        }
-        const avatarDOM = document.querySelector(constants_1.AVATAR_DOM_SELECTOR);
-        avatarDOM === null || avatarDOM === void 0 ? void 0 : avatarDOM.addEventListener("click", () => {
-            localStorage.removeItem(constants_1.SAMS_LOCAL_STORAGE_KEY);
-        });
-    }
-    catch (error) {
-        console.log(error);
-    }
-})();
-
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(0);
+/******/ 	
 /******/ })()
 ;

@@ -1,6 +1,6 @@
 {
   "name": "samscript",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "更改 SAMS 网页出校时间",
   "main": "userscript/SAMScript.js",
   "scripts": {
@@ -10,21 +10,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pboymt/userscript-typescript-template.git"
+    "url": "git+https://github.com/Kaby-Lake/SAMScript.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pboymt/userscript-typescript-template/issues"
-  },
-  "homepage": "https://github.com/pboymt/userscript-typescript-template#readme",
+  "homepage": "https://github.com/Kaby-Lake/SAMScript",
   "devDependencies": {
     "@types/node": "^16.11.10",
     "@types/prettier": "^2.7.0",
     "@types/tampermonkey": "^4.0.5",
     "@types/webpack": "^5.28.0",
-    "axios-userscript-adapter": "^0.1.12",
     "prettier": "^2.7.1",
     "terser-webpack-plugin": "^5.3.6",
     "ts-loader": "^9.2.6",
@@ -36,7 +32,7 @@
   "userscript": {
     "name": "SAMScript",
     "description": "更改 SAMS 网页出校时间",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "author": "Kaby Lake",
     "homepage": "https://github.com/Kaby-Lake/SAMScript",
     "license": "https://opensource.org/licenses/MIT",
