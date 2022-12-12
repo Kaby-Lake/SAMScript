@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name SAMScript
-// @version 1.1.1
+// @version 1.2.0
+// @namespace https://greasyfork.org/users/995444
 // @description 更改 SAMS 网页出校时间
 // @author Kaby Lake
 // @homepage https://github.com/Kaby-Lake/SAMScript
@@ -9,6 +10,7 @@
 // @match https://sams.nottingham.edu.cn/zh/Students/stuaskforleave
 // @match https://sams.nottingham.edu.cn/zh/Students/stuaskforleave/*
 // @require https://cdn.jsdelivr.net/npm/dayjs@1.11.7
+// @require https://cdn.jsdelivr.net/npm/lodash.isempty@4.4.0
 // ==/UserScript==
 
 /******/ (() => { // webpackBootstrap
@@ -30,6 +32,8 @@ const math_1 = __webpack_require__(7);
 const date_1 = __webpack_require__(5);
 const dayjs_1 = __importDefault(__webpack_require__(4));
 const weekday_1 = __importDefault(__webpack_require__(8));
+const announcements_1 = __webpack_require__(9);
+const lodash_isempty_1 = __importDefault(__webpack_require__(10));
 dayjs_1.default.extend(weekday_1.default);
 function setTimeText(DOM, date, format) {
     let timeText = date.format('YYYY-MM-DD HH:mm');
@@ -43,6 +47,8 @@ function setTimeText(DOM, date, format) {
 (function main() {
     var _a;
     try {
+        document.querySelector("body").style.visibility = "hidden";
+        (0, announcements_1.announceUpdates)();
         const isDetailPage = location.href.includes("/details/");
         const record = new record_1.Record();
         if ((0, localStorage_1.hasLocalStorage)(constants_1.SAMS_LOCAL_STORAGE_KEY)) {
@@ -58,8 +64,10 @@ function setTimeText(DOM, date, format) {
         else {
             let startHour = (0, prompt_1.getIntegerFromPrompt)("开始时间(小时):", "请输入正确的开始时间");
             let endHour = (0, prompt_1.getIntegerFromPrompt)("结束时间(小时):", "请输入正确的结束时间");
+            let reason = window.prompt("请假原因(不填则不会修改)");
             record.startTime = record.startTime.set("hour", startHour);
             record.endTime = record.endTime.set('hour', endHour);
+            record.reason = (0, lodash_isempty_1.default)(reason) ? undefined : reason;
             if ((0, date_1.isWeekends)()) {
                 record.applyTime = (0, date_1.getEndOfWeekdays)();
                 record.approveTime = (0, date_1.getEndOfWeekdays)();
@@ -81,11 +89,20 @@ function setTimeText(DOM, date, format) {
         const endTimeDOM = isDetailPage
             ? document.querySelector(constants_1.DETAIL_PAGE_END_TIME_DOM_SELECTOR)
             : document.querySelector(constants_1.LIST_PAGE_END_TIME_DOM_SELECTOR);
+        const reasonDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_REASON_DOM_SELECTOR)
+            : document.querySelector(constants_1.LIST_PAGE_REASON_DOM_SELECTOR);
         const applyTimeDOM = isDetailPage
             ? document.querySelector(constants_1.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR)
             : document.querySelector(constants_1.LIST_PAGE_APPLY_TIME_DOM_SELECTOR);
+        const statusDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_STATUS_DOM_SELECTOR)
+            : document.querySelector(constants_1.LIST_PAGE_STATUS_DOM_SELECTOR);
         const approveTimeDOM = isDetailPage
             ? document.querySelector(constants_1.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR)
+            : undefined;
+        const approveStatusDOM = isDetailPage
+            ? document.querySelector(constants_1.DETAIL_PAGE_APPROVE_STATUS_DOM_SELECTOR)
             : undefined;
         setTimeText(startTimeDOM, record.startTime, 0);
         setTimeText(endTimeDOM, record.endTime, 0);
@@ -93,13 +110,25 @@ function setTimeText(DOM, date, format) {
         if (approveTimeDOM) {
             setTimeText(approveTimeDOM, record.approveTime, 1);
         }
+        if (record.reason) {
+            reasonDOM.innerHTML = record.reason;
+        }
+        if (statusDOM) {
+            statusDOM.innerHTML = "通过";
+            statusDOM.className = 'label label-success';
+        }
+        if (approveStatusDOM) {
+            approveStatusDOM.innerHTML = "通过";
+        }
         const avatarDOM = document.querySelector(constants_1.AVATAR_DOM_SELECTOR);
         avatarDOM === null || avatarDOM === void 0 ? void 0 : avatarDOM.addEventListener("click", () => {
             localStorage.removeItem(constants_1.SAMS_LOCAL_STORAGE_KEY);
         });
+        document.querySelector("body").style.visibility = "visible";
     }
     catch (error) {
         console.log(error);
+        document.querySelector("body").style.visibility = "visible";
     }
 })();
 
@@ -111,15 +140,22 @@ function setTimeText(DOM, date, format) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AVATAR_DOM_SELECTOR = exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = exports.LIST_PAGE_APPLY_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = exports.LIST_PAGE_END_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = exports.LIST_PAGE_START_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = exports.SAMS_LOCAL_STORAGE_KEY = void 0;
+exports.AVATAR_DOM_SELECTOR = exports.DETAIL_PAGE_APPROVE_STATUS_DOM_SELECTOR = exports.DETAIL_PAGE_STATUS_DOM_SELECTOR = exports.LIST_PAGE_STATUS_DOM_SELECTOR = exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = exports.LIST_PAGE_APPLY_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_REASON_DOM_SELECTOR = exports.LIST_PAGE_REASON_DOM_SELECTOR = exports.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = exports.LIST_PAGE_END_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = exports.LIST_PAGE_START_TIME_DOM_SELECTOR = exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = exports.SAMS_VERSION = exports.SAMS_VERSION_LOCAL_STORAGE_KEY = exports.SAMS_LOCAL_STORAGE_KEY = void 0;
 exports.SAMS_LOCAL_STORAGE_KEY = 'sams_crack';
+exports.SAMS_VERSION_LOCAL_STORAGE_KEY = 'sams_crack_version';
+exports.SAMS_VERSION = '1.2.0';
 exports.DETAIL_PAGE_START_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div";
 exports.LIST_PAGE_START_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(2)";
 exports.DETAIL_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(3) > div";
 exports.LIST_PAGE_END_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(3)";
 exports.DETAIL_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(7) > div";
+exports.LIST_PAGE_REASON_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(4)";
+exports.DETAIL_PAGE_REASON_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(4) > div";
 exports.LIST_PAGE_APPLY_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(6)";
 exports.DETAIL_PAGE_APPROVE_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(2)";
+exports.LIST_PAGE_STATUS_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.table-responsive > table > tbody > tr:nth-child(2) > td:nth-child(5) > label";
+exports.DETAIL_PAGE_STATUS_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(6) > div > label";
+exports.DETAIL_PAGE_APPROVE_STATUS_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(8) > div > table > tbody > tr > td:nth-child(3)";
 exports.AVATAR_DOM_SELECTOR = "body > div.wrapper > header > nav > div.navbar-custom-menu > ul > li > ul > li.user-header > img";
 
 
@@ -162,12 +198,14 @@ class Record {
         this.endTime = (0, date_1.getStartOfDay)((0, dayjs_1.default)());
         this.applyTime = (0, date_1.getStartOfDay)((0, dayjs_1.default)());
         this.approveTime = (0, date_1.getStartOfDay)((0, dayjs_1.default)());
+        this.reason = undefined;
     }
     restoreRecord(record) {
         this.startTime = (0, dayjs_1.default)(record.startTime);
         this.endTime = (0, dayjs_1.default)(record.endTime);
         this.applyTime = (0, dayjs_1.default)(record.applyTime);
         this.approveTime = (0, dayjs_1.default)(record.approveTime);
+        this.reason = record.reason;
         return this;
     }
     toMemorizedString() {
@@ -175,7 +213,8 @@ class Record {
             startTime: this.startTime.toString(),
             endTime: this.endTime.toString(),
             applyTime: this.applyTime.toString(),
-            approveTime: this.approveTime.toString()
+            approveTime: this.approveTime.toString(),
+            reason: this.reason,
         });
     }
 }
@@ -205,7 +244,6 @@ function getStartOfDay(date) {
 }
 exports.getStartOfDay = getStartOfDay;
 function isWeekends() {
-    alert((0, dayjs_1.default)().weekday());
     return (0, dayjs_1.default)().weekday() === 6 || (0, dayjs_1.default)().weekday() === 7;
 }
 exports.isWeekends = isWeekends;
@@ -262,6 +300,623 @@ exports.getRandomInt = getRandomInt;
 
 !function(e,t){ true?module.exports=t():0}(this,(function(){"use strict";return function(e,t){t.prototype.weekday=function(e){var t=this.$locale().weekStart||0,i=this.$W,n=(i<t?i+7:i)-t;return this.$utils().u(e)?n:this.subtract(n,"day").add(e,"day")}}}));
 
+/***/ }),
+/* 9 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.announceUpdates = void 0;
+const constants_1 = __webpack_require__(1);
+const localStorage_1 = __webpack_require__(6);
+const ANNOUNCEMENT_CONTENT = `
+欢迎使用SAMScript，此次更新带来了一些错误修复和改进：
+
+- 增加了出校原因更改，不填则不会更改原有出校原因;
+- 请假列表首条记录 和 请假详情中的状态 将自动更改为 \`已通过\`
+
+开发不易，如果可以，欢迎在GitHub给项目点Star，祝您红红火火，鸿运当头
+`;
+function announceUpdates() {
+    if ((0, localStorage_1.getLocalStorage)(constants_1.SAMS_VERSION_LOCAL_STORAGE_KEY) !== constants_1.SAMS_VERSION) {
+        console.log("Announcing updates...");
+        alert(ANNOUNCEMENT_CONTENT);
+        localStorage.setItem(constants_1.SAMS_VERSION_LOCAL_STORAGE_KEY, constants_1.SAMS_VERSION);
+    }
+}
+exports.announceUpdates = announceUpdates;
+
+
+/***/ }),
+/* 10 */
+/***/ ((module, exports, __webpack_require__) => {
+
+/* module decorator */ module = __webpack_require__.nmd(module);
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    mapTag = '[object Map]',
+    objectTag = '[object Object]',
+    promiseTag = '[object Promise]',
+    setTag = '[object Set]',
+    weakMapTag = '[object WeakMap]';
+
+var dataViewTag = '[object DataView]';
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g && __webpack_require__.g.Object === Object && __webpack_require__.g;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+/** Detect free variable `exports`. */
+var freeExports =  true && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && "object" == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/** Built-in value references. */
+var Buffer = moduleExports ? root.Buffer : undefined,
+    propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
+    nativeKeys = overArg(Object.keys, Object);
+
+/* Built-in method references that are verified to be native. */
+var DataView = getNative(root, 'DataView'),
+    Map = getNative(root, 'Map'),
+    Promise = getNative(root, 'Promise'),
+    Set = getNative(root, 'Set'),
+    WeakMap = getNative(root, 'WeakMap');
+
+/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
+
+/** Used to detect maps, sets, and weakmaps. */
+var dataViewCtorString = toSource(DataView),
+    mapCtorString = toSource(Map),
+    promiseCtorString = toSource(Promise),
+    setCtorString = toSource(Set),
+    weakMapCtorString = toSource(WeakMap);
+
+/**
+ * The base implementation of `getTag`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  return objectToString.call(value);
+}
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+var getTag = baseGetTag;
+
+// Fallback for data views, maps, sets, and weak maps in IE 11,
+// for data views in Edge < 14, and promises in Node.js.
+if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (Map && getTag(new Map) != mapTag) ||
+    (Promise && getTag(Promise.resolve()) != promiseTag) ||
+    (Set && getTag(new Set) != setTag) ||
+    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+  getTag = function(value) {
+    var result = objectToString.call(value),
+        Ctor = result == objectTag ? value.constructor : undefined,
+        ctorString = Ctor ? toSource(Ctor) : undefined;
+
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString: return dataViewTag;
+        case mapCtorString: return mapTag;
+        case promiseCtorString: return promiseTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
+      }
+    }
+    return result;
+  };
+}
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to process.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+function isArguments(value) {
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+
+/**
+ * This method is like `_.isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArrayLikeObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLikeObject(document.body.children);
+ * // => true
+ *
+ * _.isArrayLikeObject('abc');
+ * // => false
+ *
+ * _.isArrayLikeObject(_.noop);
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
+
+/**
+ * Checks if `value` is a buffer.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.3.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+ * @example
+ *
+ * _.isBuffer(new Buffer(2));
+ * // => true
+ *
+ * _.isBuffer(new Uint8Array(2));
+ * // => false
+ */
+var isBuffer = nativeIsBuffer || stubFalse;
+
+/**
+ * Checks if `value` is an empty object, collection, map, or set.
+ *
+ * Objects are considered empty if they have no own enumerable string keyed
+ * properties.
+ *
+ * Array-like values such as `arguments` objects, arrays, buffers, strings, or
+ * jQuery-like collections are considered empty if they have a `length` of `0`.
+ * Similarly, maps and sets are considered empty if they have a `size` of `0`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is empty, else `false`.
+ * @example
+ *
+ * _.isEmpty(null);
+ * // => true
+ *
+ * _.isEmpty(true);
+ * // => true
+ *
+ * _.isEmpty(1);
+ * // => true
+ *
+ * _.isEmpty([1, 2, 3]);
+ * // => false
+ *
+ * _.isEmpty({ 'a': 1 });
+ * // => false
+ */
+function isEmpty(value) {
+  if (isArrayLike(value) &&
+      (isArray(value) || typeof value == 'string' ||
+        typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
+    return !value.length;
+  }
+  var tag = getTag(value);
+  if (tag == mapTag || tag == setTag) {
+    return !value.size;
+  }
+  if (nonEnumShadows || isPrototype(value)) {
+    return !nativeKeys(value).length;
+  }
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * This method returns `false`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {boolean} Returns `false`.
+ * @example
+ *
+ * _.times(2, _.stubFalse);
+ * // => [false, false]
+ */
+function stubFalse() {
+  return false;
+}
+
+module.exports = isEmpty;
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -277,17 +932,42 @@ exports.getRandomInt = getRandomInt;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 /******/ 	

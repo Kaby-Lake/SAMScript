@@ -1,6 +1,6 @@
 {
   "name": "samscript",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "更改 SAMS 网页出校时间",
   "main": "userscript/SAMScript.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "license": "MIT",
   "homepage": "https://github.com/Kaby-Lake/SAMScript",
   "devDependencies": {
+    "@types/lodash.isempty": "^4.4.7",
     "@types/node": "^16.11.10",
     "@types/prettier": "^2.7.0",
     "@types/tampermonkey": "^4.0.5",
@@ -32,10 +33,11 @@
   "userscript": {
     "name": "SAMScript",
     "description": "更改 SAMS 网页出校时间",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "author": "Kaby Lake",
     "homepage": "https://github.com/Kaby-Lake/SAMScript",
     "license": "https://opensource.org/licenses/MIT",
+    "namespace": "https://greasyfork.org/users/995444",
     "match": [
       "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave",
       "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave/*",
@@ -49,6 +51,7 @@
     "resources": []
   },
   "dependencies": {
-    "dayjs": "^1.11.7"
+    "dayjs": "^1.11.7",
+    "lodash.isempty": "^4.4.0"
   }
 }

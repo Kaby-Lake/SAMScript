@@ -6,4 +6,6 @@ export interface MemorizedType {
     applyTime: string
 
     approveTime: string
+
+    reason?: string
 }

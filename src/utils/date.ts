@@ -5,7 +5,6 @@ export function getStartOfDay(date: Dayjs): Dayjs {
 }
 
 export function isWeekends(): boolean {
-    alert(dayjs().weekday())
     return dayjs().weekday() === 6 || dayjs().weekday() === 7;
 }
 
