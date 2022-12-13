@@ -26,11 +26,9 @@
 
 #### 通过 Greasyfork 安装 （推荐）
 
-- 下载 UserScripts 并在 Safari 开启扩展权限（允许作用于所有页面）
-- 在 Files App 中创建一个 Scripts 文件夹，打开 UserScripts 并指定该文件夹为保存路径
-- 打开 https://greasyfork.org/en/scripts/456384-samscript ，点击 Install this script 按钮，再打开 UserScripts 扩展的页面点击安装
-![](https://imgbed.link/file/10155)
-![](https://imgbed.link/file/10154)
+- 下载 Stay-用户脚本扩展管理 并在 Safari 开启扩展权限（允许作用于所有页面 ![](https://imgbed.link/file/10496)
+- 打开 https://greasyfork.org/en/scripts/456384-samscript ，点击 Install this script 按钮，点击下方 Tap to install ![](https://imgbed.link/file/10497) ![](https://imgbed.link/file/10498)
+- 在 Stay 中开启 SAMScript 脚本的自动更新 ![](https://imgbed.link/file/10499)
 - 登录SAMS的请假列表页面，插件应该就可以用了
 
 
@@ -38,9 +36,8 @@
 
 #### iOS
 
-- 下载 UserScripts 并在 Safari 开启扩展权限（允许作用于所有页面）
-- 在 Files App 中创建一个 Scripts 文件夹，打开 UserScripts 并指定该文件夹为保存路径
-- 将 `/userscript/SAMScript.js` 文件放入该文件夹
+- 下载 Stay-用户脚本扩展管理 并在 Safari 开启扩展权限（允许作用于所有页面）
+- 在 Stay 中导入 `/userscript/SAMScript.js`文件
 - 登录SAMS的请假列表页面，插件应该就可以用了
 
 
