@@ -2,7 +2,7 @@ export const SAMS_LOCAL_STORAGE_KEY = 'sams_crack';
 
 export const SAMS_VERSION_LOCAL_STORAGE_KEY = 'sams_crack_version';
 
-export const SAMS_VERSION = '1.2.0'
+export const SAMS_VERSION = '1.2.2'
 
 export const DETAIL_PAGE_START_TIME_DOM_SELECTOR = "body > div.wrapper > div.content-wrapper > section.content > div > div.form-horizontal > div:nth-child(2) > div";
 

@@ -1,6 +1,6 @@
 {
   "name": "samscript",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "更改 SAMS 网页出校时间",
   "main": "userscript/SAMScript.js",
   "scripts": {
@@ -34,11 +34,12 @@
   "userscript": {
     "name": "SAMScript",
     "description": "更改 SAMS 网页出校时间",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "author": "Kaby Lake",
     "homepage": "https://github.com/Kaby-Lake/SAMScript",
     "license": "https://opensource.org/licenses/MIT",
     "namespace": "https://greasyfork.org/users/995444",
+    "updateURL": "https://greasyfork.org/scripts/456384-samscript/code/SAMScript.user.js",
     "match": [
       "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave",
       "https://appgateway.nottingham.edu.cn/*/*/zh/Students/stuaskforleave/*",
