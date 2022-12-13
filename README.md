@@ -2,6 +2,12 @@
 
 一段可以更改 UNNC SAMS 网页出校时间的脚本
 
+![Node CI](https://github.com/ant-design/pro-components/workflows/Node%20CI/badge.svg)
+[![Written in TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)](https://www.typescriptlang.org/)
+[![GitHub Star](https://img.shields.io/github/stars/kaby-lake/SAMScript.svg?style=flat-square&label=Star&color=4285dd&logo=github)](https://github.com/Kaby-Lake/SAMScript)
+[![](https://img.shields.io/static/v1?label=%20&message=GreasyFork&style=flat-square&labelColor=7B0000&color=960000&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3ggEBCQHM3fXsAAAAVdJREFUOMudkz2qwkAUhc/goBaGJBgUtBCZyj0ILkpwAW7Bws4yO3AHLiCtEFD8KVREkoiFxZzX5A2KGfN4F04zMN+ce+5c4LMUgDmANYBnrnV+plBSi+FwyHq9TgA2LQpvCiEiABwMBtzv95RSfoNEHy8DYBzHrNVqVEr9BWKcqNFoxF6vx3a7zc1mYyC73a4MogBg7vs+z+czO50OW60Wt9stK5UKp9Mpj8cjq9WqDTBHnjAdxzGQZrPJw+HA31oulzbAWgLoA0CWZVBKIY5jzGYzdLtdE9DlcrFNrY98zobqOA6TJKHW2jg4nU5sNBpFDp6mhVe5rsvVasUwDHm9Xqm15u12o+/7Hy0gD8KatOd5vN/v1FozTVN6nkchxFuI6hsAAIMg4OPxMJCXdtTbR7JJCMEgCJhlGUlyPB4XfumozInrupxMJpRSRtZlKoNYl+m/6/wDuWAjtPfsQuwAAAAASUVORK5CYII=)](https://greasyfork.org/en/scripts/456384-samscript)
+[![Latest Tag](https://badgen.net/github/tag/Kaby-Lake/SAMScript)](https://github.com/Kaby-Lake/SAMScript)
+
 - 脚本仅作用与 请假列表 和 请假详情 页面。
 - 如果之前有过更改出校时间，脚本会记住此前的输入，并且在之后保持显示之前的更改。点击右上角个人头像后点击出现的 `dropdown` 里的大头像可以清除之前输入的缓存。
 - 请在出校当天进行输入，因为脚本接受输入的 开始和结束时间 是根据脚本执行当天来算。
