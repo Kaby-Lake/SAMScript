@@ -1,7 +1,7 @@
 import path from "path";
-import { Configuration, BannerPlugin } from "webpack";
+import {Configuration} from "webpack";
 import TerserPlugin from "terser-webpack-plugin";
-import { generateHeader } from "./plugins/userscript.plugin";
+import {generateHeader} from "./plugins/userscript.plugin";
 
 const config: Configuration = {
     mode: "none",
@@ -23,25 +23,18 @@ const config: Configuration = {
         ],
     },
     optimization: {
-        minimize: false,
+        minimize: true,
         minimizer: [new TerserPlugin({
-            // minify: TerserPlugin.swcMinify,
+            minify: TerserPlugin.uglifyJsMinify,
             terserOptions: {
-                format: {
-                    comments: false,
+                output: {
+                    preamble: generateHeader(),
+                    comments: false
                 },
-                compress: false,
-                mangle: false,
             },
-            extractComments: false,
+            extractComments: false
         })],
     },
-    plugins: [
-        new BannerPlugin({
-            banner: generateHeader,
-            raw: true,
-        })
-    ]
 };
 
 export default config;
